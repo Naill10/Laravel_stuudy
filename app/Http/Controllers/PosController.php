@@ -1,28 +1,54 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Models\pos;
+
+use App\Models\Pos;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PosController extends Controller
 {
-    //get data dari database
+    // mengambil semua data dari database
     public function index(){
-        //mengangil semua data dari database
-    
-    $posts = pos::all();
-    return view('berita', compact('posts'));
+        $posts = Pos::all();
+        return view('berita', compact('posts'));
+    }
 
-}
-public function show($id)
-{
-    $post = pos::findOrFail($id); // ambil data berdasarkan ID
-    return view('berita_detail', compact('post'));  
+    public function show($id)
+    {
+        $post = Pos::findOrFail($id);
+        return view('berita_detail', compact('post'));
+    }
 
-    
-}
+    public function admin(){
+        $posts = Pos::all();
+        return view('admin', compact('posts'));
+    }
 
-public function admin(){
-    $posts = pos::all();
-    return view('admin', compact('posts'));
-}
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'image'   => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'judul'   => 'required|string|min:5',
+            'isi_berita' => 'required|string|min:30',
+            'author'  => 'required|min:1',
+            'posisi'  => 'required|min:1'
+        ]);
+
+        // upload image
+        $image = $request->file('image');
+        $image->storeAs('beritas', $image->hashName(), 'public');
+
+        // simpan data
+        Pos::create([
+            'image'   => $image->hashName(),
+            'judul'   => $request->judul,
+            'isi_berita' => $request->isi_berita,
+            'author'  => $request->author,
+            'posisi'  => $request->posisi,
+        ]);
+
+        return redirect()->route('admin.index')
+                         ->with(['success' => 'Data Berhasil Disimpan!']);
+    }
 }
