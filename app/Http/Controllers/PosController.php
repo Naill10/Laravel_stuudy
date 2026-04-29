@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Storage; 
 use App\Models\Pos;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,4 +51,36 @@ class PosController extends Controller
         return redirect()->route('admin.index')
                          ->with(['success' => 'Data Berhasil Disimpan!']);
     }
+    public function update(Request $request, $id): RedirectResponse
+{
+    $post = Pos::findOrFail($id);
+
+    $request->validate([
+        'judul'     => 'required|string|min:5',
+        'isi_berita'=> 'required|string|min:30',
+        'author'    => 'required|min:1',
+        'posisi'    => 'required|min:1',
+        'image'     => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+    ]);
+
+    // handle image kalau ada yang baru
+    if ($request->hasFile('image')) {
+    Storage::delete('public/beritas/' . $post->image);
+    $image = $request->file('image');
+    $image->storeAs('beritas', $image->hashName(), 'public');
+    $imageName = $image->hashName(); // konsisten dengan store()
+} else {
+    $imageName = $post->image;
+}
+
+    $post->update([
+        'judul'      => $request->judul,
+        'isi_berita' => $request->isi_berita,
+        'author'     => $request->author,
+        'posisi'     => $request->posisi,
+        'image'      => $imageName,
+    ]);
+
+    return redirect()->route('admin.index')->with('success', 'Berita berhasil diupdate!');
+}
 }

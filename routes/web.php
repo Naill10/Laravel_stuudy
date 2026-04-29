@@ -28,8 +28,10 @@ Route::get('/fasilitas', function () {
     return view('fasilitas');
 }); 
 Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
 Route::get('/siswa/{id}', [SiswaController::class, 'show'])->name('siswa.show');
 
 Route::get('/admin', [PosController::class, 'admin'])->name('admin.index');
 
 Route::post('/berita', [PosController::class, 'store'])->name('berita.store');
+Route::put('/admin/update/{id}', [PosController::class, 'update'])->name('berita.update');
