@@ -83,4 +83,9 @@ class PosController extends Controller
 
     return redirect()->route('admin.index')->with('success', 'Berita berhasil diupdate!');
 }
+public function destroy(Pos $id): RedirectResponse
+{
+    $id->delete();
+    return redirect()->route('admin.index')->with('success', 'Berita berhasil dihapus!');
+}
 }

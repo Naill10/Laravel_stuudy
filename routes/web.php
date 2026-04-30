@@ -35,3 +35,4 @@ Route::get('/admin', [PosController::class, 'admin'])->name('admin.index');
 
 Route::post('/berita', [PosController::class, 'store'])->name('berita.store');
 Route::put('/admin/update/{id}', [PosController::class, 'update'])->name('berita.update');
+Route::delete('/admin/delete/{id}', [PosController::class, 'destroy'])->name('admin.destroy');
